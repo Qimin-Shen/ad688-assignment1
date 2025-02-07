@@ -14,7 +14,4 @@ The following files contain system information:
 ### Task 2: Counting Python in StackOverflow Posts (Shell)
 The script `count_python.sh` counts occurrences of the word "python" in the dataset.
 
-**Usage:**
-```bash
-./_output/count_python.sh
-cat _output/python_count.txt
+
