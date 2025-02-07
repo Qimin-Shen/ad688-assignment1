@@ -4,3 +4,5 @@ stackoverflow.zip
 _output/questions.csv
 _output/question_tags.csv
 stackoverflow.zip
+*.csv
+*.zip
