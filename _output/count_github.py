@@ -1,27 +1,27 @@
 import pandas as pd
-import os
 
-# 设置数据文件目录
-data_dir = "./_output"
-files = [os.path.join(data_dir, f) for f in os.listdir(data_dir) if f.endswith(".csv")]
+# CSV 文件列表
+files = ["_output/questions.csv", "_output/question_tags.csv"]
 
-count = 0  # 统计包含 "GitHub" 的行数
+# 初始化计数
+total_count = 0
 
-# 逐个读取文件
+# 逐个文件处理
 for file in files:
+    print(f"Processing {file}...")
     try:
-        df = pd.read_csv(file, encoding="utf-8", on_bad_lines="skip")
-        count += df.apply(lambda row: row.astype(str).str.contains("GitHub", case=False, na=False).any(), axis=1).sum()
+        # 使用 chunksize=100000 分块读取，减少内存占用
+        for chunk in pd.read_csv(file, encoding="utf-8", chunksize=100000, dtype=str, low_memory=False, on_bad_lines="skip"):
+            # **向量化** 统计 'GitHub' 关键词出现的行数（比 apply() 快）
+            total_count += chunk.apply(lambda x: x.str.contains("GitHub", case=False, na=False)).any(axis=1).sum()
     except Exception as e:
-        print(f"处理文件 {file} 时出错: {e}")
+        print(f"❌ Error processing {file}: {e}")
 
-# 输出总数
-print(f"Total lines containing 'GitHub': {count}")
+# 输出统计结果
+print(f"📊 Total lines containing 'GitHub': {total_count}")
 
-# 保存结果到文件
-output_file = os.path.join(data_dir, "github_count.txt")
-with open(output_file, "w") as f:
-    f.write(f"Total lines containing 'GitHub': {count}\n")
+# 将结果写入 _output/github_count.txt
+with open("_output/github_count.txt", "w") as f:
+    f.write(f"Total lines containing 'GitHub': {total_count}\n")
 
-print(f"结果已保存到 {output_file}")
-
+print("✅ Finished writing results to _output/github_count.txt")
